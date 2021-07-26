@@ -10,24 +10,26 @@ spec:
         app: application-db
     spec:
       containers:
-      - name: k8s-demo
-        image: wardviaene/k8s-demo
-        command: ["node", "index-db.js"]
+      - name: wapl-shop
+        image: stonehye/sample-app
+        command: ["npm", "start"]
         ports:
         - name: nodejs-port
+          # valueFrom:
+          #   configMapRef:
+          #     name: waplshop-configmap
+          #     key: PORT
           containerPort: 3000
         env:
           - name: MYSQL_HOST
             value: database-service
-          - name: MYSQL_USER
-            value: root
           - name: MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: my-secrets
+                name: waplshop-secrets
                 key: rootPassword
           - name: MYSQL_DATABASE
             valueFrom:
               secretKeyRef:
-                name: my-secrets
+                name: waplshop-secrets
                 key: database
