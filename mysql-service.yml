@@ -5,7 +5,6 @@ metadata:
 spec:
   ports:
   - port: 3306
-    protocol: TCP
   selector:
     app: database
   type: NodePort

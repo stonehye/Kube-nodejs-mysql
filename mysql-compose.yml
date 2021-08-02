@@ -5,23 +5,28 @@ metadata:
   labels:
     app: database
 spec:
+  restartPolicy: Always
   containers:
   - name: mysql
-    image: mysql
+    image: mysql:latest
+    imagePullPolicy: Never # 쿠버네티스의 기본 이미지 가져오기 정책(image pull policy)은 IfNotPresent다. 따라서 이미지가 이미 있으면 레지스트리에서 이미지를 가져오지 않고 로컬 이미지를 사용한다.
     ports:
     - name: mysql-port
       containerPort: 3306
+    volumeMounts:
+    - name: mysql-persistent-storage
+      mountPath: /var/lib/mysql
     env:
       - name: MYSQL_ROOT_PASSWORD
         valueFrom:
           secretKeyRef:
             name: waplshop-secrets
             key: rootPassword
-      - name: MYSQL_USER
-        valueFrom:
-          secretKeyRef:
-            name: waplshop-secrets
-            key: username
+      # - name: MYSQL_USER
+      #   valueFrom:
+      #     secretKeyRef:
+      #       name: waplshop-secrets
+      #       key: username
       - name: MYSQL_PASSWORD
         valueFrom:
           secretKeyRef: 
@@ -32,3 +37,7 @@ spec:
           secretKeyRef:
             name: waplshop-secrets
             key: database
+  volumes:
+  - name: mysql-persistent-storage
+    persistentVolumeClaim:
+      claimName: mysql-pv-claim

@@ -1,8 +1,11 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: application-deployment
+  name: waplshop-deployment
 spec:
+  selector:
+    matchLabels:
+      app: application-db
   replicas: 3
   template:
     metadata:
@@ -12,13 +15,9 @@ spec:
       containers:
       - name: wapl-shop
         image: stonehye/sample-app
-        command: ["npm", "start"]
+        imagePullPolicy: Never
         ports:
         - name: nodejs-port
-          # valueFrom:
-          #   configMapRef:
-          #     name: waplshop-configmap
-          #     key: PORT
           containerPort: 3000
         env:
           - name: MYSQL_HOST
@@ -33,3 +32,6 @@ spec:
               secretKeyRef:
                 name: waplshop-secrets
                 key: database
+        envFrom:
+        - configMapRef:
+            name: waplshop-configmap
