@@ -1,29 +1,37 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: mysql-pv-volume
+  name: mysql-pv
   labels:
     type: local
+  namespace: waplshop
 spec:
   storageClassName: manual
   capacity:
-    storage: 2Gi
+    storage: 10Gi
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: "/home/tmax/k8s-volumes/mysql"
+  local:
+    path: "/home/tmax/hdd/k8s-volumes/mysql"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - {key: kubernetes.io/hostname, operator: In, values: [tmax-hk]}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pv-claim
+  name: mysql-pvc
+  namespace: waplshop
 spec:
   storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 10Gi
+      
 # https://m.blog.naver.com/freepsw/222005161870
 
 # https://github.com/limal/kubernetes-nodejs-mysql/blob/master/kubernetes-manifests/mysql-pv.yaml
